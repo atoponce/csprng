@@ -1,49 +1,45 @@
 #!/usr/bin/python
 
-import getopt
+import argparse
 import sys
 import time
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
 
-def fread(path):
-    try:
-        with open(path, 'r') as f:
-            return f.read()
-    except IOError:
-        # first initialization
-        return b'QTKmMIVuO/LZpVKf'
-
-def fwrite(path, seed):
-    try:
-        with open(path, 'w') as f:
-            f.write(seed)
-    except IOError:
-        print("Cannot write seed to disk.")
+parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
+parser.add_argument('-k','--key', help='AES key.')
+parser.add_argument('-s','--seed', help='AES seed.')
+parser.add_argument('-n','--numbers', help='Desired quantity of random numbers.')
+args = parser.parse_args()
 
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-# setup
-path = '/var/tmp/ansi.seed'
-
 # Input
 salt = b'FFirhzZkFKARFduT' # for PBKDF2
-K = b'My Super Secret Key' # user-input key
-s = fread(path)
+if args.key:
+    K = args.key
+else:
+    K = b'11cf0edfc106350f9d81abe1538b3f20'
 
-# env setup
+if args.seed:
+    S = args.seed
+else:
+    S = b'11462794b14c20f6b0896bac3a921485'
+
 key = KDF.PBKDF2(bytes(K), salt, 16)
+seed = KDF.PBKDF2(bytes(S), salt, 16)
 aes = AES.new(key)
 
-# the ANSI X9.17 algorithm
-d = time.time()
-D = KDF.PBKDF2(bytes(d), salt, 16)
-t = aes.encrypt(D)
-x = aes.encrypt(sxor(s,t))
-print(int(x.encode('hex'), 16)/2**128.0)
-s = aes.encrypt(sxor(x,t))
-# end loop
+if args.numbers:
+    counter = args.numbers
+else:
+    counter = 1
 
-# cleanup
-fwrite(path, s)
+for i in range(0, int(counter)):
+    date = time.time()
+    date = KDF.PBKDF2(bytes(date), salt, 16)
+    temp = aes.encrypt(date)
+    out = aes.encrypt(sxor(seed,temp))
+    seed = aes.encrypt(sxor(out,temp))
+    print(int(out.encode('hex'), 16)/2**128.0)
