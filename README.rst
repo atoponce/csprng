@@ -1,5 +1,5 @@
-Cryptographic Pseudorandom Number Generators
-============================================
+Cryptographic PRNGs
+===================
 
 Why
 ---
