@@ -14,24 +14,23 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
+salt = b'25f32d809f5a3b0a5c54650547ec67c6' # for PBKDF2
+
 if args.key:
-    K = args.key
+    key = KDF.PBKDF2(bytes(args.key), salt, 16)
 else:
-    K = b'11cf0edfc106350f9d81abe1538b3f20'
+    key = KDF.PBKDF2(b'11cf0edfc106350f9d81abe1538b3f20', salt, 16)
 
 if args.seed:
-    S = args.seed
+    seed = KDF.PBKDF2(bytes(args.seed), salt, 16)
 else:
-    S = b'807f0b5ca6725ad073a37f5abaf8de39'
+    seed = KDF.PBKDF2(b'807f0b5ca6725ad073a37f5abaf8de39', salt, 16)
 
 if args.numbers:
     number = int(args.numbers)
 else:
     number = 1
 
-salt = b'25f32d809f5a3b0a5c54650547ec67c6' # for PBKDF2
-key = KDF.PBKDF2(bytes(K), salt, 16)
-seed = KDF.PBKDF2(bytes(S), salt, 16)
 arc4 = ARC4.new(key)
 
 # the actual ANSI X9.17 algorithm
