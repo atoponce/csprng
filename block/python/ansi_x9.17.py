@@ -15,8 +15,6 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-# Input
-salt = b'FFirhzZkFKARFduT' # for PBKDF2
 if args.key:
     K = args.key
 else:
@@ -27,6 +25,7 @@ if args.seed:
 else:
     S = b'11462794b14c20f6b0896bac3a921485'
 
+salt = b'8bbb35cb1626f7c9ef291b29261acbf5' # for PBKDF2
 key = KDF.PBKDF2(bytes(K), salt, 16)
 seed = KDF.PBKDF2(bytes(S), salt, 16)
 aes = AES.new(key)
@@ -36,9 +35,9 @@ if args.numbers:
 else:
     counter = 1
 
+# the actual ANSI X9.17 algorithm
 for i in range(0, int(counter)):
-    date = time.time()
-    date = KDF.PBKDF2(bytes(date), salt, 16)
+    date = KDF.PBKDF2(bytes(time.time()), salt, 16)
     temp = aes.encrypt(date)
     out = aes.encrypt(sxor(seed,temp))
     seed = aes.encrypt(sxor(out,temp))
