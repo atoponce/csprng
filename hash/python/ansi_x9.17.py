@@ -28,7 +28,6 @@ if args.numbers:
 else:
     number = 1
 
-salt = b'7b98bf3632a4f206f8dc4386d24066c5' # for PBKDF2
 sha256 = SHA256.new(key)
 
 # the actual ANSI X9.17 algorithm
