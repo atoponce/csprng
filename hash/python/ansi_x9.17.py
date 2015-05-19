@@ -34,8 +34,6 @@ sha256 = SHA256.new(key)
 # the actual ANSI X9.17 algorithm
 for i in range(0, number):
     sha256.update(bytes(time.time()))
-    date = sha256.digest()
-    sha256.update(date)
     temp = sha256.digest()
     sha256.update(sxor(seed, temp))
     out = sha256.digest()
