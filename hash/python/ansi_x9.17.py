@@ -28,10 +28,9 @@ if args.numbers:
 else:
     number = 1
 
-sha256 = SHA256.new(key)
-
 # the actual ANSI X9.17 algorithm
 for i in range(0, number):
+    sha256 = SHA256.new(key)
     sha256.update(bytes(time.time()))
     temp = sha256.digest()
     sha256.update(sxor(seed, temp))
