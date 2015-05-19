@@ -25,7 +25,7 @@ else:
     S = b'11462794b14c20f6b0896bac3a921485'
 
 if args.numbers:
-    number = args.numbers
+    number = int(args.numbers)
 else:
     number = 1
 
@@ -35,7 +35,7 @@ seed = KDF.PBKDF2(bytes(S), salt, 16)
 aes = AES.new(key)
 
 # the actual ANSI X9.17 algorithm
-for i in range(0, int(number)):
+for i in range(0, number):
     date = KDF.PBKDF2(bytes(time.time()), salt, 16)
     temp = aes.encrypt(date)
     out = aes.encrypt(sxor(seed,temp))
