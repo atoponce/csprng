@@ -24,7 +24,7 @@ else:
 if args.seed:
     seed = KDF.PBKDF2(bytes(args.seed), salt, 16)
 else:
-    seed = KDF.PBKDF2(b'11cf0edfc106350f9d81abe1538b3f20', salt, 16)
+    seed = KDF.PBKDF2(b'11462794b14c20f6b0896bac3a921485', salt, 16)
 
 if args.numbers:
     number = int(args.numbers)
