@@ -14,17 +14,17 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-salt = b'8bbb35cb1626f7c9ef291b29261acbf5' # for PBKDF2
+salt = '8bbb35cb1626f7c9ef291b29261acbf5' # for PBKDF2
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 16)
 else:
-    key = KDF.PBKDF2(b'11cf0edfc106350f9d81abe1538b3f20', salt, 16)
+    key = KDF.PBKDF2('11cf0edfc106350f9d81abe1538b3f20', salt, 16)
 
 if args.seed:
     seed = KDF.PBKDF2(bytes(args.seed), salt, 16)
 else:
-    seed = KDF.PBKDF2(b'11462794b14c20f6b0896bac3a921485', salt, 16)
+    seed = KDF.PBKDF2('11462794b14c20f6b0896bac3a921485', salt, 16)
 
 if args.numbers:
     number = int(args.numbers)
