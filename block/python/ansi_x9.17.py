@@ -7,8 +7,8 @@ from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
 parser.add_argument('-k','--key', help='AES key.')
-parser.add_argument('-s','--seed', help='AES seed.')
-parser.add_argument('-n','--numbers', help='Desired quantity of random numbers.')
+parser.add_argument('-s','--seed', help='Starting seed.')
+parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
 
 def sxor(s1, s2):
