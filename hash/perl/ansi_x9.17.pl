@@ -93,9 +93,7 @@ for (my $i=0; $i<$number; $i++) {
     my $sha256 = Digest::SHA->new(256);
     my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
     my $temp = $sha256->add($date);
-    my $temp = $temp->digest;
-    my $out = $sha256->add(sxor($seed, $temp));
-    my $out = $out->digest;
-    $seed = $sha256->add(sxor($out, $temp));
-    print hex(unpack("H*", $out))%2**128, "\n";
+    my $out = $sha256->add(sxor($seed, $temp->digest));
+    $seed = $sha256->add(sxor($out->digest, $temp->digest));
+    print hex(unpack("H*", $out->digest))%2**128, "\n";
 }
