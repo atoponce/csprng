@@ -39,5 +39,4 @@ for i in range(0, number):
     temp = arc4.encrypt(date)
     out = arc4.encrypt(sxor(seed, temp))
     seed = arc4.encrypt(sxor(out, temp))
-    print(int(out.encode('hex'), 16)/2**128.0)
-    
+    print(int(out.encode('hex'), 16))

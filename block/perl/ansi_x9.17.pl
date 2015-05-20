@@ -2,6 +2,7 @@
 use strict;
 
 use bigint;
+use Math::BigFloat;
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
 use Crypt::Rijndael;
 use Getopt::Long qw(GetOptions);
@@ -15,9 +16,7 @@ my $h;  # display usage
 my $key;
 my $seed;
 my $number;
-my $date;
-my $temp;
-my $out;
+my $pbkdf2;
 
 my $res = GetOptions(
     "k|key=s"     => \$k,
@@ -31,7 +30,7 @@ sub sxor {
     my ($s1, $s2) = @_;
     my @s1 = unpack("C*", $s1);
     my @s2 = unpack("C*", $s2);
-    for (my $i=0; $i<32; $i++) {
+    for (my $i=0; $i<16; $i++) {
         my $res = @s1[$i] ^ @s2[$i];
         $str .= chr($res);
     }
@@ -39,12 +38,16 @@ sub sxor {
 }
 
 my $salt = 'f7c82a42cce025235dcebcabf75ebffb';  # for Crypt::PBKDF2
-my $pbkdf2 = Crypt::PBKDF2->new(
+
+{
+no bigint;
+$pbkdf2 = Crypt::PBKDF2->new(
     hash_class  => 'HMACSHA1',
     iterations  => 1000,
     output_len  => 16,
     salt_len    => 4,
 );
+}
 
 if ($h) {
     print "usage: ansi_x9.17.prl [-h] [-k KEY] [-s SEED] [-n NUMBERS]
@@ -62,20 +65,20 @@ optional arguments:
 }
 
 if ($k) {
-    $key = $pbkdf2->PBKDF2_hex($k, $salt);
+    $key = $pbkdf2->PBKDF2($k, $salt);
     $key = (split /:/, $key)[-1];
 }
 else {
-    $key = $pbkdf2->PBKDF2_hex('044b8130e902fe475f5e9831f72da023', $salt);
+    $key = $pbkdf2->PBKDF2('044b8130e902fe475f5e9831f72da023', $salt);
     $key = (split /:/, $key)[-1];
 }
 
 if ($s) {
-    $seed = $pbkdf2->PBKDF2_hex($s, $salt);
+    $seed = $pbkdf2->PBKDF2($s, $salt);
     $seed = (split /:/, $seed)[-1];
 }
 else {
-    $seed = $pbkdf2->PBKDF2_hex('12155bf67b90e1deac3432a7db97e2b4', $salt);
+    $seed = $pbkdf2->PBKDF2('12155bf67b90e1deac3432a7db97e2b4', $salt);
     $seed = (split /:/, $seed)[-1];
 }
 
@@ -90,9 +93,9 @@ my $aes = Crypt::Rijndael->new($key);
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
-    $date = $pbkdf2->PBKDF2_hex(Time::HiRes::time(), $salt);
-    $temp = $aes->encrypt($date);
-    $out = $aes->encrypt(sxor($seed, $temp));
+    my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
+    my $temp = $aes->encrypt($date);
+    my $out = $aes->encrypt(sxor($seed, $temp));
     $seed = $aes->encrypt(sxor($out, $temp));
-    print hex(unpack("H*", $out))/2**128, "\n";
+    print hex(unpack("H*", $out)), "\n";
 }

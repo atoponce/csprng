@@ -40,4 +40,4 @@ for i in range(0, number):
     out = sha256.digest()
     sha256.update(sxor(out, temp))
     seed = sha256.digest()
-    print(int(out.encode('hex'), 16)/2**256.0)
+    print(int(out.encode('hex'), 16)/2**128)
