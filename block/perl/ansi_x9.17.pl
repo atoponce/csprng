@@ -91,5 +91,5 @@ for (my $i=0; $i<$number; $i++) {
     $temp = $aes->encrypt($date);
     $out = $aes->encrypt(sxor($seed, $temp));
     $seed = $aes->encrypt(sxor($out, $temp));
-    print oct($out), "\n";
+    print int(unpack("Q*", $out))/2**64, "\n";
 }
