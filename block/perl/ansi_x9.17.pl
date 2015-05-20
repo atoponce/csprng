@@ -1,8 +1,10 @@
 #!/usr/bin/perl
 use strict;
-use Getopt::Long qw(GetOptions);
-use Crypt::Rijndael;
+
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
+use Crypt::Rijndael;
+use Getopt::Long qw(GetOptions);
+use Time::HiRes;
 
 my $k;  # user-supplied key
 my $s;  # user-supplied seed
@@ -87,9 +89,9 @@ my $aes = Crypt::Rijndael->new($key);
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
-    $date = $pbkdf2->PBKDF2_hex(time, $salt);
+    $date = $pbkdf2->PBKDF2_hex(Time::HiRes::time(), $salt);
     $temp = $aes->encrypt($date);
     $out = $aes->encrypt(sxor($seed, $temp));
     $seed = $aes->encrypt(sxor($out, $temp));
-    print int(unpack("Q*", $out))/2**64, "\n";
+    print int(unpack("Q*", $out))/2**64, "\n"; # 64-bits?! That's it?! Really?!
 }
