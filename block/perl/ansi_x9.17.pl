@@ -24,18 +24,6 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-sub sxor {
-    my $str;
-    my ($s1, $s2) = @_;
-    my @s1 = unpack("C*", $s1);
-    my @s2 = unpack("C*", $s2);
-    for (my $i=0; $i<16; $i++) {
-        my $res = @s1[$i] ^ @s2[$i];
-        $str .= chr($res);
-    }
-    return $str;
-}
-
 my $salt = 'f7c82a42cce025235dcebcabf75ebffb';  # for Crypt::PBKDF2
 
 {
@@ -94,7 +82,7 @@ my $aes = Crypt::Rijndael->new($key);
 for (my $i=0; $i<$number; $i++) {
     my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
     my $temp = $aes->encrypt($date);
-    my $out = $aes->encrypt(sxor($seed, $temp));
-    $seed = $aes->encrypt(sxor($out, $temp));
+    my $out = $aes->encrypt($seed ^ $temp);
+    $seed = $aes->encrypt($out ^ $temp);
     print hex(unpack("H*", $out)), "\n";
 }
