@@ -24,18 +24,6 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-sub sxor {
-    my $str;
-    my ($s1, $s2) = @_;
-    my @s1 = unpack("C*", $s1);
-    my @s2 = unpack("C*", $s2);
-    for (my $i=0; $i<16; $i++) {
-        my $res = @s1[$i] ^ @s2[$i];
-        $str .= chr($res);
-    }
-    return $str;
-}
-
 my $salt = 'd28808258b51d61523209f72fcdc98ad';  # for Crypt::PBKDF2
 
 {
@@ -93,7 +81,7 @@ for (my $i=0; $i<$number; $i++) {
     my $sha256 = Digest::SHA->new(256);
     my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
     my $temp = $sha256->add($date);
-    my $out = $sha256->add(sxor($seed, $temp->digest));
-    $seed = $sha256->add(sxor($out->digest, $temp->digest));
+    my $out = $sha256->add($seed ^ $temp->digest);
+    $seed = $sha256->add($out->digest ^ $temp->digest);
     print hex(unpack("H*", $out->digest))%2**128, "\n";
 }
