@@ -36,7 +36,7 @@ sub sxor {
     return $str;
 }
 
-my $salt = 'f7c82a42cce025235dcebcabf75ebffb';  # for Crypt::PBKDF2
+my $salt = '2266ca556e5d565b04454d0bfda644e0';  # for Crypt::PBKDF2
 
 {
     no bignum;
@@ -68,7 +68,7 @@ if ($k) {
     $key = (split /:/, $key)[-1];
 }
 else {
-    $key = $pbkdf2->PBKDF2('044b8130e902fe475f5e9831f72da023', $salt);
+    $key = $pbkdf2->PBKDF2('a4160a248025e37ceb2112e889fef21d', $salt);
     $key = (split /:/, $key)[-1];
 }
 
@@ -77,7 +77,7 @@ if ($s) {
     $seed = (split /:/, $seed)[-1];
 }
 else {
-    $seed = $pbkdf2->PBKDF2('12155bf67b90e1deac3432a7db97e2b4', $salt);
+    $seed = $pbkdf2->PBKDF2('8c98579689ce48eb90e9f20307d3f9b2', $salt);
     $seed = (split /:/, $seed)[-1];
 }
 
