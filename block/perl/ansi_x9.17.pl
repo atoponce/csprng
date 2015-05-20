@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 
+use bigint;
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
 use Crypt::Rijndael;
 use Getopt::Long qw(GetOptions);
@@ -93,5 +94,5 @@ for (my $i=0; $i<$number; $i++) {
     $temp = $aes->encrypt($date);
     $out = $aes->encrypt(sxor($seed, $temp));
     $seed = $aes->encrypt(sxor($out, $temp));
-    print int(unpack("Q*", $out))/2**64, "\n"; # 64-bits?! That's it?! Really?!
+    print hex(unpack("H*", $out))/2**128, "\n";
 }
