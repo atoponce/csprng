@@ -30,7 +30,9 @@ my $salt = 'f7c82a42cce025235dcebcabf75ebffb';  # for Crypt::PBKDF2
     no bignum;
     $pbkdf2 = Crypt::PBKDF2->new(
         hash_class  => 'HMACSHA1',
-        iterations  => 1000,
+        # 0 iterations guarantees high performance 16-byte output
+        # the security rests on the entropy of $key, not iterating pbkdf2
+        iterations  => 0,
         output_len  => 16,
         salt_len    => 4,
     );
