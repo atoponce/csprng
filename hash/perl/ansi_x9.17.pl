@@ -79,7 +79,7 @@ else {
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
     my $sha256 = Digest::SHA->new(256);
-    my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
+    my $date = Time::HiRes::time();
     my $temp = $sha256->add($date);
     my $out = $sha256->add($seed ^ $temp->digest);
     $seed = $sha256->add($out->digest ^ $temp->digest);
