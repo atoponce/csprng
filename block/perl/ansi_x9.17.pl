@@ -78,13 +78,13 @@ else {
     $number = 1;
 }
 
-my $aes = Crypt::Rijndael->new($key);
+my $rijndael = Crypt::Rijndael->new($key);
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
     my $date = $pbkdf2->PBKDF2(Time::HiRes::time(), $salt);
-    my $temp = $aes->encrypt($date);
-    my $out = $aes->encrypt($seed ^ $temp);
-    $seed = $aes->encrypt($out ^ $temp);
+    my $temp = $rijndael->encrypt($date);
+    my $out = $rijndael->encrypt($seed ^ $temp);
+    $seed = $rijndael->encrypt($out ^ $temp);
     print hex(unpack("H*", $out)), "\n";
 }

@@ -15,16 +15,14 @@ def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
 salt = '1f787c00c11fadf15d744ca97c64b640' # for PBKDF2
+key = KDF.PBKDF2('85b5ac8190121c198185ce4945a187d3', salt, 32, 0)
+seed = KDF.PBKDF2('a132adc5cf9e42f5644e4f3c85e997da', salt, 32, 0)
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 32, 0)
-else:
-    key = KDF.PBKDF2('85b5ac8190121c198185ce4945a187d3', salt, 32, 0)
 
 if args.seed:
     seed = KDF.PBKDF2(bytes(args.seed), salt, 32, 0)
-else:
-    seed = KDF.PBKDF2('a132adc5cf9e42f5644e4f3c85e997da', salt, 32, 0)
 
 if args.numbers:
     number = int(args.numbers)
