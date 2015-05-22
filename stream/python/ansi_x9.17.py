@@ -33,7 +33,7 @@ arc4 = ARC4.new(key)
 
 # the actual ANSI X9.17 algorithm
 for i in range(0, number):
-    date = repr(time.time()
+    date = repr(time.time())
     temp = arc4.encrypt(date.zfill(32))
     out = arc4.encrypt(sxor(seed, temp))
     seed = arc4.encrypt(sxor(out, temp))
