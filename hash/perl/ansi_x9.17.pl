@@ -11,9 +11,6 @@ my $k;  # user-supplied key
 my $s;  # user-supplied seed
 my $n;  # user-supplied rounds
 my $h;  # display usage
-
-my $key;
-my $seed;
 my $number;
 my $pbkdf2;
 
@@ -24,7 +21,9 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-my $salt = 'd28808258b51d61523209f72fcdc98ad';  # for Crypt::PBKDF2
+my $salt = pack("H*", 'd28808258b51d61523209f72fcdc98ad');  # for Crypt::PBKDF2
+my $key = pack("H*", 'bc87425f8aca7e6d5904e519a1f0122b');
+my $seed = pack("H*", '9777fb02e408913fd51f20891b999093');
 
 {
     no bignum;
@@ -55,33 +54,20 @@ optional arguments:
 
 if ($k) {
     $key = $pbkdf2->PBKDF2($k, $salt);
-    $key = (split /:/, $key)[-1];
-}
-else {
-    $key = $pbkdf2->PBKDF2('bc87425f8aca7e6d5904e519a1f0122b', $salt);
-    $key = (split /:/, $key)[-1];
+    $key = pack("H*", (split /:/, $key)[-1]);
 }
 
 if ($s) {
     $seed = $pbkdf2->PBKDF2($s, $salt);
-    $seed = (split /:/, $seed)[-1];
-}
-else {
-    $seed = $pbkdf2->PBKDF2('9777fb02e408913fd51f20891b999093', $salt);
-    $seed = (split /:/, $seed)[-1];
+    $seed = pack("H*", (split /:/, $seed)[-1]);
 }
 
-if ($n) {
-    $number = int($n);
-}
-else {
-    $number = 1;
-}
+$number = ($n ? int($n) : 1);
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
-    my $sha1 = Digest::SHA->new(1);
     my $date = Time::HiRes::time();
+    my $sha1 = Digest::SHA->new(1)->add($key);
     my $temp = $sha1->add($date);
     my $out = $sha1->add($seed ^ $temp->digest);
     $seed = $sha1->add($out->digest ^ $temp->digest);
