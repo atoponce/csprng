@@ -66,9 +66,9 @@ $number = ($n ? int($n) : 1);
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
-    my $temp = Digest::SHA::sha1_hex($key . Time::HiRes::time());
-    my $out = Digest::SHA::sha1_hex($seed ^ $temp);
-    $seed = Digest::SHA::sha1_hex($out ^ $temp);
+    my $temp = Digest::SHA::sha1($key . Time::HiRes::time());
+    my $out = Digest::SHA::sha1($seed ^ $temp);
+    $seed = Digest::SHA::sha1($out ^ $temp);
     # ugh. hex() is slow, slow, slow. you're killing me, smalls!
-    print hex($out)%2**128, "\n";
+    print hex(unpack("H*", $out))%2**128, "\n";
 }
