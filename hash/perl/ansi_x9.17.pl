@@ -80,10 +80,10 @@ else {
 
 # the actual ANSI X9.17 algorithm
 for (my $i=0; $i<$number; $i++) {
-    my $sha256 = Digest::SHA->new(256);
+    my $sha1 = Digest::SHA->new(1);
     my $date = Time::HiRes::time();
-    my $temp = $sha256->add($date);
-    my $out = $sha256->add($seed ^ $temp->digest);
-    $seed = $sha256->add($out->digest ^ $temp->digest);
+    my $temp = $sha1->add($date);
+    my $out = $sha1->add($seed ^ $temp->digest);
+    $seed = $sha1->add($out->digest ^ $temp->digest);
     print hex(unpack("H*", $out->digest))%2**128, "\n";
 }
