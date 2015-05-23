@@ -31,11 +31,11 @@ else:
 
 # the actual ANSI X9.17 algorithm
 for i in range(0, number):
-    sha256 = SHA.new(key)
-    sha256.update(bytes(time.time()))
-    temp = sha256.digest()
-    sha256.update(sxor(seed, temp))
-    out = sha256.digest()
-    sha256.update(sxor(out, temp))
-    seed = sha256.digest()
+    sha1 = SHA.new(key)
+    sha1.update(bytes(time.time()))
+    temp = sha1.digest()
+    sha1.update(sxor(seed, temp))
+    out = sha1.digest()
+    sha1.update(sxor(out, temp))
+    seed = sha1.digest()
     print(int(out.encode('hex'), 16)%2**128)
