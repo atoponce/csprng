@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import struct
 import time
 from Crypto.Hash import SHA
 from Crypto.Protocol import KDF
@@ -38,4 +39,5 @@ for i in range(0, number):
     out = sha1.digest()
     sha1.update(sxor(out, temp))
     seed = sha1.digest()
-    print(int(out.encode('hex'), 16)%2**128)
+    res = struct.unpack_from('QQ', out)
+    print(res[0]+res[1]*2**64)
