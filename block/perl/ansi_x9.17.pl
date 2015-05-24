@@ -11,8 +11,6 @@ my $s;  # user-supplied seed
 my $n;  # user-supplied rounds
 my $h;  # display usage
 
-my $key;
-my $seed;
 my $number;
 my $pbkdf2;
 
@@ -23,7 +21,9 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-my $salt = 'f7c82a42cce025235dcebcabf75ebffb';  # for Crypt::PBKDF2
+my $salt = pack('H*', 'f7c82a42cce025235dcebcabf75ebffb');  # for Crypt::PBKDF2
+my $key = pack('H*', '044b8130e902fe475f5e9831f72da023');
+my $seed = pack('H*', '12155bf67b90e1deac3432a7db97e2b4');
 
 $pbkdf2 = Crypt::PBKDF2->new(
     hash_class  => 'HMACSHA1',
@@ -49,30 +49,9 @@ optional arguments:
     exit;
 }
 
-if ($k) {
-    $key = $pbkdf2->PBKDF2($k, $salt);
-    $key = (split /:/, $key)[-1];
-}
-else {
-    $key = $pbkdf2->PBKDF2('044b8130e902fe475f5e9831f72da023', $salt);
-    $key = (split /:/, $key)[-1];
-}
-
-if ($s) {
-    $seed = $pbkdf2->PBKDF2($s, $salt);
-    $seed = (split /:/, $seed)[-1];
-}
-else {
-    $seed = $pbkdf2->PBKDF2('12155bf67b90e1deac3432a7db97e2b4', $salt);
-    $seed = (split /:/, $seed)[-1];
-}
-
-if ($n) {
-    $number = int($n);
-}
-else {
-    $number = 1;
-}
+$key = $pbkdf2->PBKDF2($k, $salt) if ($k);
+$seed = $pbkdf2->PBKDF2($s, $salt) if ($s);
+$number = ($n ? int($n) : 1);
 
 my $rijndael = Crypt::Rijndael->new($key);
 

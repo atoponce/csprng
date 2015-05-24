@@ -11,8 +11,6 @@ my $s;  # user-supplied seed
 my $n;  # user-supplied rounds
 my $h;  # display usage
 
-my $key;
-my $seed;
 my $number;
 my $pbkdf2;
 
@@ -23,7 +21,9 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-my $salt = '2266ca556e5d565b04454d0bfda644e0';  # for Crypt::PBKDF2
+my $salt = pack("H*", '2266ca556e5d565b04454d0bfda644e0');  # for Crypt::PBKDF2
+my $key = pack("H*", 'a4160a248025e37ceb2112e889fef21d');
+my $seed = pack("H*", '8c98579689ce48eb90e9f20307d3f9b2');
 
 $pbkdf2 = Crypt::PBKDF2->new(
     # 0 iterations guarantees high performance 16-byte output
@@ -49,30 +49,9 @@ optional arguments:
     exit;
 }
 
-if ($k) {
-    $key = $pbkdf2->PBKDF2($k, $salt);
-    $key = (split /:/, $key)[-1];
-}
-else {
-    $key = $pbkdf2->PBKDF2('a4160a248025e37ceb2112e889fef21d', $salt);
-    $key = (split /:/, $key)[-1];
-}
-
-if ($s) {
-    $seed = $pbkdf2->PBKDF2($s, $salt);
-    $seed = (split /:/, $seed)[-1];
-}
-else {
-    $seed = $pbkdf2->PBKDF2('8c98579689ce48eb90e9f20307d3f9b2', $salt);
-    $seed = (split /:/, $seed)[-1];
-}
-
-if ($n) {
-    $number = int($n);
-}
-else {
-    $number = 1;
-}
+$key = $pbkdf2->PBKDF2($k, $salt) if ($k);
+$seed = $pbkdf2->PBKDF2($s, $salt) if ($s);
+$number = ($n ? int($n) : 1);
 
 my $rc4 = Crypt::RC4->new($key);
 
