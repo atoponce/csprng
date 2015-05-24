@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 
-use bignum;
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
 use Digest::SHA;
 use Getopt::Long qw(GetOptions);
@@ -25,17 +24,14 @@ my $salt = pack("H*", 'd28808258b51d61523209f72fcdc98ad');  # for Crypt::PBKDF2
 my $key = pack("H*", 'bc87425f8aca7e6d5904e519a1f0122b');
 my $seed = pack("H*", '9777fb02e408913fd51f20891b999093');
 
-{
-    no bignum;
-    $pbkdf2 = Crypt::PBKDF2->new(
-        hash_class  => 'HMACSHA1',
-        # 0 iterations guarantees high performance 16-byte output
-        # the security rests on the entropy of 'key', not iterating pbkdf2
-        iterations  => 0,
-        output_len  => 16,
-        salt_len    => 4,
-    );
-}
+$pbkdf2 = Crypt::PBKDF2->new(
+    hash_class  => 'HMACSHA1',
+    # 0 iterations guarantees high performance 16-byte output
+    # the security rests on the entropy of 'key', not iterating pbkdf2
+    iterations  => 0,
+    output_len  => 20,
+    salt_len    => 4,
+);
 
 if ($h) {
     print "usage: ansi_x9.17.prl [-h] [-k KEY] [-s SEED] [-n NUMBERS]
@@ -69,6 +65,5 @@ for (my $i=0; $i<$number; $i++) {
     my $temp = Digest::SHA::sha1($key . Time::HiRes::time());
     my $out = Digest::SHA::sha1($seed ^ $temp);
     $seed = Digest::SHA::sha1($out ^ $temp);
-    # ugh. hex() is slow, slow, slow. you're killing me, smalls!
-    print hex(unpack("H*", $out))%2**128, "\n";
+    print unpack("QQ", $out), "\n";
 }
