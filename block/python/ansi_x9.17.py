@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import struct
 import time
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
@@ -37,4 +38,5 @@ for i in range(0, number):
     temp = aes.encrypt(date.zfill(32))
     out = aes.encrypt(sxor(seed,temp))
     seed = aes.encrypt(sxor(out,temp))
-    print(int(out.encode('hex'), 16))
+    res = struct.unpack('QQ', out)
+    print res[0]+res[1]*2**64
