@@ -48,16 +48,8 @@ optional arguments:
     exit;
 }
 
-if ($k) {
-    $key = $pbkdf2->PBKDF2($k, $salt);
-    $key = pack("H*", (split /:/, $key)[-1]);
-}
-
-if ($s) {
-    $seed = $pbkdf2->PBKDF2($s, $salt);
-    $seed = pack("H*", (split /:/, $seed)[-1]);
-}
-
+$key = $pbkdf2->PBKDF2($k, $salt) if ($k);
+$seed = $pbkdf2->PBKDF2($s, $salt) if ($s);
 $number = ($n ? int($n) : 1);
 
 # the actual ANSI X9.17 algorithm
