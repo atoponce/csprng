@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 
-use bignum;
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
 use Crypt::RC4;
 use Getopt::Long qw(GetOptions);
@@ -26,17 +25,14 @@ my $res = GetOptions(
 
 my $salt = '2266ca556e5d565b04454d0bfda644e0';  # for Crypt::PBKDF2
 
-{
-    no bignum;
-    $pbkdf2 = Crypt::PBKDF2->new(
-        # 0 iterations guarantees high performance 16-byte output
-        # the security rests on the entropy of $key, not iterating pkdf2
-        hash_class  => 'HMACSHA1',
-        iterations  => 0,
-        output_len  => 16,
-        salt_len    => 4,
-    );
-}
+$pbkdf2 = Crypt::PBKDF2->new(
+    # 0 iterations guarantees high performance 16-byte output
+    # the security rests on the entropy of $key, not iterating pkdf2
+    hash_class  => 'HMACSHA1',
+    iterations  => 0,
+    output_len  => 16,
+    salt_len    => 4,
+);
 
 if ($h) {
     print "usage: ansi_x9.17.prl [-h] [-k KEY] [-s SEED] [-n NUMBERS]
@@ -86,5 +82,5 @@ for (my $i=0; $i<$number; $i++) {
     my $temp = $rc4->RC4($date);
     my $out = $rc4->RC4($seed ^ $temp);
     $seed = $rc4->RC4($out ^ $temp);
-    print hex(unpack("H*", $out)), "\n";
+    print unpack("QQ", $out), "\n";
 }
