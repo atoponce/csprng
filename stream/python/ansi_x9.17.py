@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import argparse
+import struct
 import time
 from Crypto.Cipher import ARC4
 from Crypto.Protocol import KDF
@@ -37,4 +38,5 @@ for i in range(0, number):
     temp = arc4.encrypt(date.zfill(32))
     out = arc4.encrypt(sxor(seed, temp))
     seed = arc4.encrypt(sxor(out, temp))
-    print(int(out.encode('hex'), 16))
+    res = struct.unpack_from('QQ', out)
+    print(res[0]+res[1]*2**64)
