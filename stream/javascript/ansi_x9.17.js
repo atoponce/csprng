@@ -37,9 +37,13 @@ if(opts.numbers) number = opts.numbers;
 // Almost never return exponential notation
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
+// Start nanoseconds benchmarking
+var startTime = process.hrtime();
+
 for (var i=0; i<number; i++) {
     var time = (new Date).getTime().toString();
-    var date = crypto.pbkdf2Sync(time, salt, 0, 16);
+    var diff = process.hrtime(startTime);
+    var date = crypto.pbkdf2Sync(time+diff, salt, 0, 16);
     var temp = new Buffer(encrypt(date, key));
     var out = new Buffer(encrypt(xor(seed, temp), key));
     seed = new Buffer(encrypt(xor(out, temp), key));
