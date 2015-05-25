@@ -37,9 +37,10 @@ if(opts.numbers) number = opts.numbers;
 for (var i=0; i<number; i++) {
     var date = (new Date).getTime().toString();
     var temp = new Buffer(encrypt(date), 'hex');
+    //console.log(temp.toString('hex'));
     var out = new Buffer(encrypt(sxor(seed, temp), 'hex'));
 
-    console.log(out.toString());
+    console.log(new BigNumber(out, 16).toString());
 
     seed = new Buffer(encrypt(sxor(out, temp), 'hex'));
 }
