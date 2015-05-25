@@ -5,7 +5,7 @@ var crypto = require('crypto');
 var stdio = require('stdio');
 
 var opts = stdio.getopt({
-    'key': {key: 'k', args: 1, description: 'AES key.'},
+    'key': {key: 'k', args: 1, description: 'RC4 key.'},
     'seed': {key: 's', args: 1, description: 'Starting seed.'},
     'numbers': {key: 'n', args: 1, description: 'Quantity of random numbers.'}
 });
@@ -21,8 +21,8 @@ function xor(s1, s2) {
 }
 
 function encrypt(s, k) {
-    var aes = crypto.createCipher('rc4', k);
-    return aes.update(s);
+    var rc4 = crypto.createCipher('rc4', k);
+    return rc4.update(s);
 }
 
 var salt = 'f1af459e9cf4dd33168d1bcfdeea03a5'; // for pbkdf2
