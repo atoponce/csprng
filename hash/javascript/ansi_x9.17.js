@@ -25,9 +25,9 @@ function digest(s, k) {
     return sha1.update(s).digest();
 }
 
-var salt = 'f1af459e9cf4dd33168d1bcfdeea03a5'; // for pbkdf2
-var key = crypto.pbkdf2Sync('3049074005466cb6615601e698b06540', salt, 0, 16);
-var seed = new Buffer('01e29845c6a7907487e6df778c18d649', 'hex');
+var salt = '6dd59598fe1520e52bc3e91c54dfeb9f'; // for pbkdf2
+var key = crypto.pbkdf2Sync('8a289e301d5e7e78ff49788c1328acfa', salt, 0, 16);
+var seed = new Buffer('823fc6c81045addc425a6fd3681dad51', 'hex');
 var number = 1;
 
 if(opts.key) key = crypto.pbkdf2Sync(opts.key, salt, 0, 16);
