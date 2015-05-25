@@ -22,11 +22,15 @@ function xor(s1, s2) {
 
 function encrypt(s, k) {
     var aes = crypto.createCipher('aes128', k);
+    aes.setAutoPadding(false);
     return aes.update(s) + aes.final();
 }
 
+// salt.length = 32
 var salt = 'a149e11d6b49590b9b394568c603c9c1'; // for pbkdf2
+// key.length = 16
 var key = crypto.pbkdf2Sync('63e007252ab90adf43fb0515bbb42c47', salt, 0, 16);
+// seed.length = 16
 var seed = new Buffer('0c2edeada47381a6590a56f37bcd1ac7', 'hex');
 var number = 1;
 
@@ -37,9 +41,9 @@ if(opts.numbers) number = opts.numbers;
 for (var i=0; i<number; i++) {
     var time = (new Date).getTime().toString();
     console.log("Time: "+time.toString('hex'));
-    var date = crypto.pbkdf2Sync(time, salt, 0, 16);
+    var date = crypto.pbkdf2Sync(time, salt, 0, 16); // date.length = 16
     console.log("Date: "+date.toString('hex'));
-    var temp = new Buffer(encrypt(date, key));
+    var temp = new Buffer(encrypt(date, key));   // temp.length = 70
     console.log("Temp: "+temp.toString('hex'));
     var out = new Buffer(encrypt(xor(seed, temp), key));
     console.log("Out: "+out.toString('hex'));
