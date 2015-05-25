@@ -10,7 +10,7 @@ var opts = stdio.getopt({
     'numbers': {key: 'n', args: 1, description: 'Quantity of random numbers.'}
 });
 
-function sxor(s1, s2) {
+function xor(s1, s2) {
     s1 = new Buffer(s1);
     s2 = new Buffer(s2);
     var xor = [];
@@ -20,9 +20,11 @@ function sxor(s1, s2) {
     return new Buffer(xor);
 }
 
-function encrypt(str) {
-    var aes = crypto.createCipher('aes128', key);
-    return aes.update(str, 'utf8', 'hex') + aes.final('hex');
+function encrypt(str, k) {
+    var aes = crypto.createCipher('aes128', k);
+    var ct =  aes.update(str, 'utf8', 'hex') + aes.final('hex');
+    return ct;
+
 }
 
 var salt = 'a149e11d6b49590b9b394568c603c9c1'; // for pbkdf2
@@ -36,11 +38,10 @@ if(opts.numbers) number = opts.numbers;
 
 for (var i=0; i<number; i++) {
     var date = (new Date).getTime().toString();
-    var temp = new Buffer(encrypt(date), 'hex');
-    //console.log(temp.toString('hex'));
-    var out = new Buffer(encrypt(sxor(seed, temp), 'hex'));
+    var temp = new Buffer(encrypt(date, key), 'hex');
+    var out = new Buffer(encrypt(xor(seed, temp), key), 'hex');
 
-    console.log(new BigNumber(out, 16).toString());
+    console.log(new BigNumber(out.toString('hex'), 16).toString());
 
-    seed = new Buffer(encrypt(sxor(out, temp), 'hex'));
+    seed = new Buffer(encrypt(xor(out, temp), key), 'hex');
 }
