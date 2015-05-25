@@ -39,4 +39,4 @@ for i in range(0, number):
     out = aes.encrypt(sxor(seed,temp))
     seed = aes.encrypt(sxor(out,temp))
     res = struct.unpack('QQ', out)
-    print res[0]+res[1]*2**64
+    print res[0]*2**64+res[1]
