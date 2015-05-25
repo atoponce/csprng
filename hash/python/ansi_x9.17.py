@@ -40,4 +40,4 @@ for i in range(0, number):
     sha1.update(sxor(out, temp))
     seed = sha1.digest()
     res = struct.unpack_from('QQ', out)
-    print(res[0]+res[1]*2**64)
+    print(res[0]*2**64+res[1])
