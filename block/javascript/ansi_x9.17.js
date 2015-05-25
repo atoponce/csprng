@@ -21,7 +21,7 @@ function xor(s1, s2) {
 }
 
 function encrypt(s, k) {
-    var aes = crypto.createCipher('aes-128-ecb', k);
+    var aes = crypto.createCipher('aes128', k);
     return aes.update(s);
 }
 
