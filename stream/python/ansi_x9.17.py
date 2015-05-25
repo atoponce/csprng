@@ -39,4 +39,4 @@ for i in range(0, number):
     out = arc4.encrypt(sxor(seed, temp))
     seed = arc4.encrypt(sxor(out, temp))
     res = struct.unpack_from('QQ', out)
-    print(res[0]+res[1]*2**64)
+    print(res[0]*2**64+res[1])
