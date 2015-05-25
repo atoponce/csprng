@@ -20,10 +20,9 @@ function sxor(s1, s2) {
     return new Buffer(xor);
 }
 
-function encrypt(hex) {
+function encrypt(str) {
     var aes = crypto.createCipher('aes128', key);
-    ct = aes.update(hex, 'utf8', 'hex') + aes.final('hex');
-    return ct;
+    return aes.update(str, 'utf8', 'hex') + aes.final('hex');
 }
 
 var salt = 'a149e11d6b49590b9b394568c603c9c1'; // for pbkdf2
@@ -37,10 +36,10 @@ if(opts.numbers) number = opts.numbers;
 
 for (var i=0; i<number; i++) {
     var date = (new Date).getTime().toString();
-    console.log(date); 
     var temp = new Buffer(encrypt(date), 'hex');
-    console.log(temp); 
     var out = new Buffer(encrypt(sxor(seed, temp), 'hex'));
-    console.log(out); 
+
+    console.log(out.toString());
+
     seed = new Buffer(encrypt(sxor(out, temp), 'hex'));
 }
