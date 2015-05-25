@@ -20,11 +20,10 @@ function xor(s1, s2) {
     return new Buffer(xor);
 }
 
-function encrypt(str, k) {
+function encrypt(s, k) {
+    k = new Buffer(k, 'hex');
     var aes = crypto.createCipher('aes128', k);
-    var ct =  aes.update(str, 'utf8', 'hex') + aes.final('hex');
-    return ct;
-
+    return aes.update(s, 'utf8', 'hex') + aes.final('hex');
 }
 
 var salt = 'a149e11d6b49590b9b394568c603c9c1'; // for pbkdf2
