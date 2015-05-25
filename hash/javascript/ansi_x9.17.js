@@ -29,6 +29,7 @@ var salt = '6dd59598fe1520e52bc3e91c54dfeb9f'; // for pbkdf2
 var key = crypto.pbkdf2Sync('8a289e301d5e7e78ff49788c1328acfa', salt, 0, 16);
 var seed = new Buffer('823fc6c81045addc425a6fd3681dad51', 'hex');
 var number = 1;
+var modulus = new BigNumber('340282366920938463463374607431768211456'); // 2^128
 
 if(opts.key) key = crypto.pbkdf2Sync(opts.key, salt, 0, 16);
 if(opts.seed) seed = crypto.pbkdf2Sync(opts.seed, salt, 0, 16);
@@ -45,5 +46,6 @@ for (var i=0; i<number; i++) {
     var temp = new Buffer(digest(date, key));
     var out = new Buffer(digest(xor(seed, temp), key));
     seed = new Buffer(digest(xor(out, temp), key));
-    console.log(new BigNumber(out.toString('hex'), 16).toString());
+    var res = new BigNumber(out.toString('hex'), 16).mod(modulus);
+    console.log(res.toString());
 }
