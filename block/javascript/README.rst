@@ -15,7 +15,8 @@ AES in counter mode
     $ ./aes_counter.js -b -n 250000 | rngtest 
     rngtest 2-unofficial-mt.14
     Copyright (c) 2004 by Henrique de Moraes Holschuh
-    This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
     
     rngtest: starting FIPS tests...
     rngtest: entropy source exhausted!

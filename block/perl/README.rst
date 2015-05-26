@@ -17,7 +17,8 @@ AES in counter mode
     $ ./aes_counter.pl -b -n 250000 | rngtest 
     rngtest 2-unofficial-mt.14
     Copyright (c) 2004 by Henrique de Moraes Holschuh
-    This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    This is free software; see the source for copying conditions.  There is NO
+    warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
     rngtest: starting FIPS tests...
     rngtest: entropy source exhausted!
@@ -54,7 +55,6 @@ ANSI x9.17 DRBG
     rngtest: FIPS 140-2(2001-10-10) Runs: 1
     rngtest: FIPS 140-2(2001-10-10) Long run: 0
     rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-    rngtest: input channel speed: (min=2571685.740; avg=9276478.210;
-    max=0.000)bits/s
+    rngtest: input channel speed: (min=2571685.740; avg=9276478.210; max=0.000)bits/s
     rngtest: FIPS tests speed: (min=110.251; avg=147.064; max=150.185)Mibits/s
     rngtest: Program run time: 3898299 microseconds

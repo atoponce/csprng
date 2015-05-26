@@ -28,8 +28,7 @@ RC4 in counter mode
     rngtest: FIPS 140-2(2001-10-10) Runs: 0
     rngtest: FIPS 140-2(2001-10-10) Long run: 0
     rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-    rngtest: input channel speed: (min=287.995; avg=2418.126;
-    max=2981.415)Kibits/s
+    rngtest: input channel speed: (min=287.995; avg=2418.126; max=2981.415)Kibits/s
     rngtest: FIPS tests speed: (min=89.547; avg=146.173; max=150.185)Mibits/s
     rngtest: Program run time: 13429646 microseconds
 
@@ -54,7 +53,6 @@ ANSI x9.17 DRBG
     rngtest: FIPS 140-2(2001-10-10) Runs: 0
     rngtest: FIPS 140-2(2001-10-10) Long run: 0
     rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
-    rngtest: input channel speed: (min=283.033; avg=1488.677;
-    max=1844.485)Kibits/s
+    rngtest: input channel speed: (min=283.033; avg=1488.677; max=1844.485)Kibits/s
     rngtest: FIPS tests speed: (min=100.918; avg=146.562; max=150.185)Mibits/s
     rngtest: Program run time: 21506884 microseconds
