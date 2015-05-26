@@ -6,7 +6,7 @@ Dependencies
 Randomness Tests
 ================
 
-AES in counter mode
+RC4 in counter mode
 -------------------
 
 ::
