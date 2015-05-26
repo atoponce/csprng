@@ -6,6 +6,7 @@ use Crypt::Rijndael;
 use Getopt::Long qw(GetOptions);
 use Time::HiRes;
 
+my $b;  # display raw binary output
 my $k;  # user-supplied key
 my $n;  # user-supplied rounds
 my $h;  # display usage
@@ -14,6 +15,7 @@ my $number;
 my $pbkdf2;
 
 my $res = GetOptions(
+    "b|binary"    => \$b,
     "k|key=s"     => \$k,
     "n|numbers=i" => \$n,
     "h|help"      => \$h,
@@ -37,7 +39,8 @@ if ($h) {
 AES in counter mode CSPRNG
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help            Show this help message and exit.
+  -b, --binary          Raw binary output.
   -k KEY, --key KEY     AES key.
   -n NUMBERS, --numbers NUMBERS
                         Quantity of random numbers.
@@ -53,6 +56,7 @@ my $counter = Time::HiRes::time()*1000000;
 
 for (my $i=0; $i<$number; $i++) {
     my $out = $rijndael->encrypt(sprintf("%016d", $counter));
-    print unpack("QQ", $out), "\n";
     $counter++;
+    if ($b) { print $out; }
+    else { print unpack("QQ", $out), "\n"; }
 }

@@ -2,11 +2,13 @@
 
 import argparse
 import struct
+import sys
 import time
 from Crypto.Hash import SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
+parser.add_argument('-b','--binary', help='Raw binary output.', action="store_true")
 parser.add_argument('-k','--key', help='SHA-256 key.')
 parser.add_argument('-s','--seed', help='Starting seed.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
@@ -31,7 +33,7 @@ else:
     number = 1
 
 # the actual ANSI X9.17 algorithm
-for i in range(0, number):
+for i in xrange(0, number):
     sha1 = SHA.new(key)
     sha1.update(bytes(time.time()))
     temp = sha1.digest()
@@ -39,5 +41,8 @@ for i in range(0, number):
     out = sha1.digest()
     sha1.update(sxor(out, temp))
     seed = sha1.digest()
-    res = struct.unpack_from('QQ', out)
-    print(res[0]*2**64+res[1])
+    if args.binary:
+        sys.stdout.write(out)
+    else:
+        res = struct.unpack_from('QQ', out)
+        print(res[0]*2**64+res[1])

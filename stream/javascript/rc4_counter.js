@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var stdio = require('stdio');
 
 var opts = stdio.getopt({
+    'binary': {key: 'b', args: 0, description: 'Raw binary output.'},
     'key': {key: 'k', args: 1, description: 'RC4 key.'},
     'numbers': {key: 'n', args: 1, description: 'Quantity of random numbers.'}
 });
@@ -31,6 +32,7 @@ var counter = Date.now();
 for (var i=0; i<number; i++) {
     var ctr = crypto.pbkdf2Sync(counter+process.hrtime(startTime), salt, 0, 16);
     var out = new Buffer(encrypt(ctr, key));
-    console.log(new BigNumber(out.toString('hex'), 16).toString());
     counter++;
+    if(opts.binary) process.stdout.write(out);
+    else console.log(new BigNumber(out.toString('hex'), 16).toString());
 }

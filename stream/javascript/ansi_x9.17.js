@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var stdio = require('stdio');
 
 var opts = stdio.getopt({
+    'binary': {key: 'b', args: 0, description: 'Raw binary output.'},
     'key': {key: 'k', args: 1, description: 'RC4 key.'},
     'seed': {key: 's', args: 1, description: 'Starting seed.'},
     'numbers': {key: 'n', args: 1, description: 'Quantity of random numbers.'}
@@ -45,5 +46,6 @@ for (var i=0; i<number; i++) {
     var temp = new Buffer(encrypt(date, key));
     var out = new Buffer(encrypt(xor(seed, temp), key));
     seed = new Buffer(encrypt(xor(out, temp), key));
-    console.log(new BigNumber(out.toString('hex'), 16).toString());
+    if(opts.binary) process.stdout.write(out);
+    else console.log(new BigNumber(out.toString('hex'), 16).toString());
 }

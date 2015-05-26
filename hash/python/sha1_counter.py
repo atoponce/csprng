@@ -2,11 +2,13 @@
 
 import argparse
 import struct
+import sys
 import time
 from Crypto.Hash import SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='SHA-1 in counter mode CSPRNG')
+parser.add_argument('-b','--binary', help='Raw binary output.', action="store_true")
 parser.add_argument('-k','--key', help='SHA-1 key.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
@@ -24,10 +26,13 @@ if args.numbers:
 counter = int(time.time())
 
 # SHA-1 in counter mode
-for i in range(0, number):
+for i in xrange(0, number):
     sha1 = SHA.new(key)
     sha1.update(bytes(counter))
     out = sha1.digest()
-    res = struct.unpack_from('QQ', out)
-    print res[0]*2**64+res[1]
     counter += 1
+    if args.binary:
+        sys.stdout.write(out)
+    else:
+        res = struct.unpack_from('QQ', out)
+        print(res[0]*2**64+res[1])

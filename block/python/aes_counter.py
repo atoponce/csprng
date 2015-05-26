@@ -2,11 +2,13 @@
 
 import argparse
 import struct
+import sys
 import time
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='AES in counter mode CSPRNG')
+parser.add_argument('-b','--binary', help='Raw binary output.', action="store_true")
 parser.add_argument('-k','--key', help='AES key.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
@@ -25,8 +27,11 @@ aes = AES.new(key)
 counter = int(time.time())
 
 # AES in counter mode
-for i in range(0, number):
+for i in xrange(0, number):
     out = aes.encrypt(repr(counter).zfill(16))
-    res = struct.unpack('QQ', out)
-    print res[0]*2**64+res[1]
     counter += 1
+    if args.binary:
+        sys.stdout.write(out)
+    else:
+        res = struct.unpack('QQ', out)
+        print(res[0]*2**64+res[1])

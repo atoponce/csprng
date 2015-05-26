@@ -3,9 +3,3 @@
 
 # Node dependency directory
 node_modules
-
-# Benchmarks (for testing)
-benchmark.sh
-block_*.txt
-hash_*.txt
-stream_*.txt

@@ -6,6 +6,7 @@ use Digest::SHA;
 use Getopt::Long qw(GetOptions);
 use Time::HiRes;
 
+my $b;  # display raw binary output
 my $k;  # user-supplied key
 my $s;  # user-supplied seed
 my $n;  # user-supplied rounds
@@ -14,6 +15,7 @@ my $number;
 my $pbkdf2;
 
 my $res = GetOptions(
+    "b|binary"    => \$b,
     "k|key=s"     => \$k,
     "s|seed=s"    => \$s,
     "n|numbers=i" => \$n,
@@ -39,7 +41,8 @@ if ($h) {
 ANSI x9.17 DRBG
 
 optional arguments:
-  -h, --help            show this help message and exit
+  -h, --help            Show this help message and exit.
+  -b, --binary          Raw binary output.
   -k KEY, --key KEY     AES key.
   -s SEED, --seed SEED  Starting seed.
   -n NUMBERS, --numbers NUMBERS
@@ -57,5 +60,6 @@ for (my $i=0; $i<$number; $i++) {
     my $temp = Digest::SHA::sha1($key . Time::HiRes::time());
     my $out = Digest::SHA::sha1($seed ^ $temp);
     $seed = Digest::SHA::sha1($out ^ $temp);
-    print unpack("QQ", $out), "\n";
+    if ($b) { print $out; }
+    else { print unpack("QQ", $out), "\n"; }
 }

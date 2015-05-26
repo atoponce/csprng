@@ -2,11 +2,13 @@
 
 import argparse
 import struct
+import sys
 import time
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
+parser.add_argument('-b','--binary', help='Raw binary output.', action="store_true")
 parser.add_argument('-k','--key', help='AES key.')
 parser.add_argument('-s','--seed', help='Starting seed.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
@@ -33,10 +35,13 @@ else:
 aes = AES.new(key)
 
 # the actual ANSI X9.17 algorithm
-for i in range(0, number):
+for i in xrange(0, number):
     date = repr(time.time())
     temp = aes.encrypt(date.zfill(32))
     out = aes.encrypt(sxor(seed,temp))
     seed = aes.encrypt(sxor(out,temp))
-    res = struct.unpack('QQ', out)
-    print res[0]*2**64+res[1]
+    if args.binary:
+        sys.stdout.write(out)
+    else:
+        res = struct.unpack('QQ', out)
+        print(res[0]*2**64+res[1])
