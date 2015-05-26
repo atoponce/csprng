@@ -27,12 +27,15 @@ to follow.
 What
 ----
 
-Each CSPRNG prints a 128-bit number in decimal form with the range [0, 2^128).
+Each CSPRNG prints a random number in either decimal or raw binary form. The
+range is dependent on the cryptographic primitive. Typically, it is [0, 2^128),
+or [0, 2^160);
+
 Cryptographic primitives currently used are:
 
 * AES-128-EBC
 * Rijndael-128-EBC
-* SHA-256
+* SHA-1
 * RC4
 
 License
