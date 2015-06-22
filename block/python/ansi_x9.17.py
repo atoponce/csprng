@@ -27,8 +27,9 @@ ripemd = digest.hexdigest()
 digest = SHA.new(data)
 sha = digest.hexdigest()
 
-key = KDF.PBKDF2(sha, ripemd, 16, 0)
-seed = KDF.PBKDF2(ripemd, sha, 16, 0)
+salt = sxor(sha, ripemd)
+key = KDF.PBKDF2(sha, salt, 16, 0)
+seed = KDF.PBKDF2(ripemd, salt, 16, 0)
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 16, 0)

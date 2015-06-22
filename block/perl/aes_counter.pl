@@ -3,6 +3,8 @@ use strict;
 
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
 use Crypt::Rijndael;
+use Crypt::Digest::RIPEMD160;
+use Digest::SHA;
 use Getopt::Long qw(GetOptions);
 use Time::HiRes;
 
@@ -21,8 +23,12 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-my $salt = pack('H*', 'b9a2625702639d9af9a5feec0f5d8c6b');  # for Crypt::PBKDF2
-my $key = pack('H*', 'fbb8c6f40714f894f65d7a53e81b951e');
+open(FILE, '/proc/interrupts');
+my $data = join('',<FILE>);
+close(FILE);
+
+my $sha = Digest::SHA::sha1($data);
+my $ripemd = Crypt::Digest::RIPEMD160::ripemd160($data);
 
 $pbkdf2 = Crypt::PBKDF2->new(
     hash_class  => 'HMACSHA1',
@@ -47,6 +53,9 @@ optional arguments:
 ";
     exit;
 }
+
+my $salt = $sha^$ripemd;
+my $key = $pbkdf2->PBKDF2($sha, $salt);
 
 $key = $pbkdf2->PBKDF2($k, $salt) if ($k);
 $number = ($n ? int($n) : 1);

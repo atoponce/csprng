@@ -14,6 +14,9 @@ parser.add_argument('-k','--key', help='AES key.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
 
+def sxor(s1, s2):
+    return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
+
 with open('/proc/interrupts','r') as f:
     data = f.read().replace('\n','')
 
@@ -23,7 +26,8 @@ ripemd = digest.hexdigest()
 digest = SHA.new(data)
 sha = digest.hexdigest()
 
-key = KDF.PBKDF2(sha, ripemd, 16, 0)
+salt = sxor(sha, ripemd)
+key = KDF.PBKDF2(sha, salt, 16, 0)
 number = 1
 
 if args.key:
