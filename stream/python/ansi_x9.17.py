@@ -5,6 +5,7 @@ import struct
 import sys
 import time
 from Crypto.Cipher import ARC4
+from Crypto.Hash import RIPEMD, SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
@@ -17,9 +18,17 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-salt = '25f32d809f5a3b0a5c54650547ec67c6' # for PBKDF2
-key = KDF.PBKDF2('11cf0edfc106350f9d81abe1538b3f20', salt, 16, 0)
-seed = KDF.PBKDF2('807f0b5ca6725ad073a37f5abaf8de39', salt, 16, 0)
+with open('/proc/interrupts','r') as f:
+    data = f.read().replace('\n','')
+
+d = RIPEMD.new(data)
+ripemd = d.hexdigest()
+d = SHA.new(data)
+sha = d.hexdigest()
+salt = sxor(sha, ripemd)
+key = KDF.PBKDF2(sha, salt, 16, 0)
+seed = KDF.PBKDF2(ripemd, salt, 16, 0)
+number = 1
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 16, 0)
@@ -29,8 +38,6 @@ if args.seed:
 
 if args.numbers:
     number = int(args.numbers)
-else:
-    number = 1
 
 arc4 = ARC4.new(key)
 

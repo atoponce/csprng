@@ -4,7 +4,7 @@ import argparse
 import struct
 import sys
 import time
-from Crypto.Hash import SHA
+from Crypto.Hash import RIPEMD, SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
@@ -17,9 +17,17 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-salt = '1f787c00c11fadf15d744ca97c64b640' # for PBKDF2
-key = KDF.PBKDF2('85b5ac8190121c198185ce4945a187d3', salt, 32, 0)
-seed = KDF.PBKDF2('a132adc5cf9e42f5644e4f3c85e997da', salt, 32, 0)
+with open('/proc/interrupts','r') as f:
+    data = f.read().replace('\n','')
+
+d = RIPEMD.new(data)
+ripemd = d.hexdigest()
+d = SHA.new(data)
+sha = d.hexdigest()
+salt = sxor(sha, ripemd)
+key = KDF.PBKDF2(sha, salt, 16, 0)
+seed = KDF.PBKDF2(ripemd, salt, 16, 0)
+number = 1
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 32, 0)
@@ -29,8 +37,6 @@ if args.seed:
 
 if args.numbers:
     number = int(args.numbers)
-else:
-    number = 1
 
 # the actual ANSI X9.17 algorithm
 for i in xrange(0, number):

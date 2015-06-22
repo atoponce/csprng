@@ -4,7 +4,7 @@ import argparse
 import struct
 import sys
 import time
-from Crypto.Hash import SHA
+from Crypto.Hash import RIPEMD, SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='SHA-1 in counter mode CSPRNG')
@@ -13,8 +13,18 @@ parser.add_argument('-k','--key', help='SHA-1 key.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
 
-salt = '957954e4e3cc45e5049f20bfad8a58f2' # for PBKDF2
-key = KDF.PBKDF2('faf72df86670f51512482d9ff0fb62f3', salt, 16, 0)
+def sxor(s1, s2):
+    return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
+
+with open('/proc/interrupts','r') as f:
+    data = f.read().replace('\n','')
+
+d = RIPEMD.new(data)
+ripemd = d.hexdigest()
+d = SHA.new(data)
+sha = d.hexdigest()
+salt = sxor(sha, ripemd)
+key = KDF.PBKDF2(sha, salt, 16, 0)
 number = 1
 
 if args.key:

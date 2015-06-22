@@ -2,6 +2,7 @@
 
 var BigNumber = require('bignumber');
 var crypto = require('crypto');
+var fs = require('fs');
 var stdio = require('stdio');
 
 var opts = stdio.getopt({
@@ -26,9 +27,14 @@ function encrypt(s, k) {
     return rc4.update(s);
 }
 
-var salt = 'f1af459e9cf4dd33168d1bcfdeea03a5'; // for pbkdf2
-var key = crypto.pbkdf2Sync('3049074005466cb6615601e698b06540', salt, 0, 16);
-var seed = new Buffer('01e29845c6a7907487e6df778c18d649', 'hex');
+var data = fs.readFileSync('/proc/interrupts').toString();
+var d = crypto.createHash('sha1');
+var sha = d.update(data).digest();
+var d = crypto.createHash('ripemd160');
+var ripemd = d.update(data).digest();
+var salt = xor(sha, ripemd);
+var key = crypto.pbkdf2Sync(sha, salt, 0, 16);
+var seed = crypto.pbkdf2Sync(ripemd, salt, 0, 16);
 var number = 1;
 
 if(opts.key) key = crypto.pbkdf2Sync(opts.key, salt, 0, 16);

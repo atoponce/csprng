@@ -58,8 +58,8 @@ optional arguments:
 }
 
 my $salt = $sha^$ripemd;
-my $key = $pbkdf2->PBKDF2($sha, $ripemd);
-my $seed = $pbkdf2->PBKDF2($ripemd, $sha);
+my $key = $pbkdf2->PBKDF2($sha, $salt);
+my $seed = $pbkdf2->PBKDF2($ripemd, $salt);
 
 $key = $pbkdf2->PBKDF2($k, $salt) if ($k);
 $seed = $pbkdf2->PBKDF2($s, $salt) if ($s);

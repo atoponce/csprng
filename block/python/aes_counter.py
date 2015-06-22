@@ -20,12 +20,10 @@ def sxor(s1, s2):
 with open('/proc/interrupts','r') as f:
     data = f.read().replace('\n','')
 
-digest = RIPEMD.new(data)
-ripemd = digest.hexdigest()
-
-digest = SHA.new(data)
-sha = digest.hexdigest()
-
+d = RIPEMD.new(data)
+ripemd = d.hexdigest()
+d = SHA.new(data)
+sha = d.hexdigest()
 salt = sxor(sha, ripemd)
 key = KDF.PBKDF2(sha, salt, 16, 0)
 number = 1

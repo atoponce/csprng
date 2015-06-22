@@ -20,19 +20,17 @@ function xor(s1, s2) {
     }
     return new Buffer(xor);
 }
+
 function encrypt(s, k) {
     var aes = crypto.createCipher('aes128', k);
     return aes.update(s);
 }
 
 var data = fs.readFileSync('/proc/interrupts').toString();
-
-var digest = crypto.createHash('sha1');
-var sha = digest.update(data).digest();
-
-var digest = crypto.createHash('ripemd160');
-var ripemd = digest.update(data).digest();
-
+var d = crypto.createHash('sha1');
+var sha = d.update(data).digest();
+var d = crypto.createHash('ripemd160');
+var ripemd = d.update(data).digest();
 var salt = xor(sha, ripemd);
 var key = crypto.pbkdf2Sync(sha, salt, 0, 16);
 var number = 1;

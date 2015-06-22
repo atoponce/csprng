@@ -2,6 +2,7 @@
 use strict;
 
 use Crypt::PBKDF2;      # requires libcrypt-pbkdf2-perl
+use Crypt::Digest::RIPEMD160;
 use Digest::SHA;
 use Getopt::Long qw(GetOptions);
 use Time::HiRes;
@@ -22,9 +23,12 @@ my $res = GetOptions(
     "h|help"      => \$h,
 );
 
-my $salt = pack("H*", 'd28808258b51d61523209f72fcdc98ad');  # for Crypt::PBKDF2
-my $key = pack("H*", 'bc87425f8aca7e6d5904e519a1f0122b');
-my $seed = pack("H*", '9777fb02e408913fd51f20891b999093');
+open(FILE, '/proc/interrupts');
+my $data = join('',<FILE>);
+close(FILE);
+
+my $sha = Digest::SHA::sha1($data);
+my $ripemd = Crypt::Digest::RIPEMD160::ripemd160($data);
 
 $pbkdf2 = Crypt::PBKDF2->new(
     hash_class  => 'HMACSHA1',
@@ -50,6 +54,10 @@ optional arguments:
 ";
     exit;
 }
+
+my $salt = $sha^$ripemd;
+my $key = $pbkdf2->PBKDF2($sha, $salt);
+my $seed = $pbkdf2->PBKDF2($ripemd, $salt);
 
 $key = $pbkdf2->PBKDF2($k, $salt) if ($k);
 $seed = $pbkdf2->PBKDF2($s, $salt) if ($s);
