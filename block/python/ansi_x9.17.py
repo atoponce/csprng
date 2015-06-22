@@ -5,6 +5,7 @@ import struct
 import sys
 import time
 from Crypto.Cipher import AES
+from Crypto.Hash import RIPEMD, SHA
 from Crypto.Protocol import KDF
 
 parser = argparse.ArgumentParser(description='ANSI x9.17 DRBG')
@@ -17,9 +18,17 @@ args = parser.parse_args()
 def sxor(s1, s2):
     return ''.join(chr(ord(a)^ord(b)) for a,b in zip(s1,s2))
 
-salt = '8bbb35cb1626f7c9ef291b29261acbf5' # for PBKDF2
-key = KDF.PBKDF2('11cf0edfc106350f9d81abe1538b3f20', salt, 16, 0)
-seed = KDF.PBKDF2('11462794b14c20f6b0896bac3a921485', salt, 16, 0)
+with open('/proc/interrupts','r') as f:
+    data = f.read().replace('\n','')
+
+digest = RIPEMD.new(data)
+ripemd = digest.hexdigest()
+
+digest = SHA.new(data)
+sha = digest.hexdigest()
+
+key = KDF.PBKDF2(sha, ripemd, 16, 0)
+seed = KDF.PBKDF2(ripemd, sha, 16, 0)
 
 if args.key:
     key = KDF.PBKDF2(bytes(args.key), salt, 16, 0)

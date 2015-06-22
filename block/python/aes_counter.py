@@ -6,6 +6,7 @@ import sys
 import time
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
+from Crypto.Hash import RIPEMD, SHA
 
 parser = argparse.ArgumentParser(description='AES in counter mode CSPRNG')
 parser.add_argument('-b','--binary', help='Raw binary output.', action="store_true")
@@ -13,8 +14,16 @@ parser.add_argument('-k','--key', help='AES key.')
 parser.add_argument('-n','--numbers', help='Quantity of random numbers.')
 args = parser.parse_args()
 
-salt = 'c7575a194b575ee2f5001483515e3d74' # for PBKDF2
-key = KDF.PBKDF2('0a7b92cb8bb4392ed08f896173a02326', salt, 16, 0)
+with open('/proc/interrupts','r') as f:
+    data = f.read().replace('\n','')
+
+digest = RIPEMD.new(data)
+ripemd = digest.hexdigest()
+
+digest = SHA.new(data)
+sha = digest.hexdigest()
+
+key = KDF.PBKDF2(sha, ripemd, 16, 0)
 number = 1
 
 if args.key:
