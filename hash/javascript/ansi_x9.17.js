@@ -1,6 +1,6 @@
 #!/usr/bin/node
 
-var BigNumber = require('bignumber');
+var BigNumber = require('bignumber.js');
 var crypto = require('crypto');
 var fs = require('fs');
 var stdio = require('stdio');
